@@ -5,7 +5,7 @@ type Side = "white" | "White" | "Black" | "black";
 export default function Home() {
   const dimensions: { length: number; side: Side } = {
     length: 800,
-    side: "white",
+    side: "black",
   };
   return (
     <main>
