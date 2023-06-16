@@ -25,12 +25,18 @@ export default function Chessboard({
       : target.append(beingDragged);
   };
   const dragOver = (e: DragEvent) => e.preventDefault();
-  const dragEnd = (e: DragEvent) => {};
+  const dragEnd = (e: DragEvent) => {
+    console.log(e.target);
+  };
   const populate = () => {
-    const fen = position.split("/");
+    const filteredPosition =
+      side === "Black" || "black"
+        ? position.split("").reverse().join("")
+        : position;
+    const fen = filteredPosition.split("/");
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
-        const square = document.getElementById(
+        let square = document.getElementById(
           String.fromCharCode(
             side == "white" ? "a".charCodeAt(0) + j : "h".charCodeAt(0) - j
           ) + (side == "white" ? 8 - i : i + 1).toString()
@@ -39,17 +45,19 @@ export default function Chessboard({
           j += parseInt(fen[i][j]) - 1;
           continue;
         }
+        const sidePiece = side == "white" ? "w" : "b";
+
         let piece =
           fen[i][j] === fen[i][j].toUpperCase()
-            ? "w" + fen[i][j].toUpperCase()
-            : "b" + fen[i][j].toUpperCase();
-
+            ? sidePiece + fen[i][j].toUpperCase()
+            : (sidePiece === "w" ? "b" : "w") + fen[i][j].toUpperCase();
         const image = document.createElement("img");
         image.setAttribute("id", piece);
         image.setAttribute("src", `/chess/chess_kaneo/${piece}.svg`);
         image.draggable = true;
         image.addEventListener("dragstart", dragStart);
         image.addEventListener("dragend", dragEnd);
+
         square?.appendChild(image);
       }
     }
@@ -84,16 +92,8 @@ export default function Chessboard({
       board?.appendChild(g);
     }
     populate();
-    //   const image = document.createElement("img");
-    //   image.setAttribute("src", "/chess/chess_kaneo/bA.svg");
-    //   image.draggable = true;
-    //   image.addEventListener("dragstart", dragStart);
-
-    // document.getElementById("h8")?.appendChild(image);
   };
-  //   const dragStart = (e: Event) => {
-  //     console.log("dragStart");
-  //   };
+
   useEffect(() => {
     setup();
 
