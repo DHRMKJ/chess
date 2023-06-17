@@ -1,6 +1,5 @@
 "use client";
 
-import { Edu_SA_Beginner } from "next/font/google";
 import { useEffect } from "react";
 type Side = "white" | "White" | "Black" | "black";
 type Props = {
@@ -33,6 +32,7 @@ export default function Chessboard({
       if (target.nodeName === "IMG") {
         hasPiece = true;
         beingTouched = target;
+        beingTouched.setAttribute("class", "shadow-md");
       }
     }
   };
