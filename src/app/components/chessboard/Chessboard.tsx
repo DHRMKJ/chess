@@ -1,5 +1,6 @@
 "use client";
 
+import { Edu_SA_Beginner } from "next/font/google";
 import { useEffect } from "react";
 type Side = "white" | "White" | "Black" | "black";
 type Props = {
@@ -14,8 +15,26 @@ export default function Chessboard({
 }: Props) {
   // const initialPosition = ""
   let beingDragged: HTMLElement;
+  let beingTouched: HTMLElement,
+    hasPiece = false;
   const dragStart = (e: DragEvent) => {
     beingDragged = e.target as HTMLElement;
+  };
+  const onClick = (e: Event) => {
+    if (hasPiece) {
+      hasPiece = false;
+      const target = e.target as HTMLElement;
+      if (!target) return;
+      target.nodeName === "IMG"
+        ? target.parentNode?.replaceChild(beingTouched, target)
+        : target.append(beingTouched);
+    } else {
+      const target = e.target as HTMLElement;
+      if (target.nodeName === "IMG") {
+        hasPiece = true;
+        beingTouched = target;
+      }
+    }
   };
   const dragDrop = (e: DragEvent) => {
     const target = e.target as HTMLElement;
@@ -25,9 +44,7 @@ export default function Chessboard({
       : target.append(beingDragged);
   };
   const dragOver = (e: DragEvent) => e.preventDefault();
-  const dragEnd = (e: DragEvent) => {
-    console.log(e.target);
-  };
+  const dragEnd = (e: DragEvent) => {};
   const populate = () => {
     const filteredPosition =
       side === "Black" || "black"
@@ -86,6 +103,7 @@ export default function Chessboard({
         square.style.height = length / 8 + "px";
         square.style.backgroundColor = j % 2 == i % 2 ? "white" : "black";
         square.addEventListener("dragover", dragOver);
+        square.addEventListener("click", onClick);
         square.addEventListener("drop", dragDrop);
         g.appendChild(square);
       }
@@ -96,20 +114,6 @@ export default function Chessboard({
 
   useEffect(() => {
     setup();
-
-    return () => {
-      for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
-          const square = document.getElementById(
-            String.fromCharCode(
-              side == "white" ? "a".charCodeAt(0) + j : "h".charCodeAt(0) - j
-            ) + (side == "white" ? 8 - i : i + 1).toString()
-          );
-          square?.removeEventListener("dragover", dragOver);
-          square?.removeEventListener("drop", dragDrop);
-        }
-      }
-    };
   }, []);
 
   return <div id="chessboard"></div>;
